@@ -1,0 +1,19 @@
+# System
+.DS_Store
+*.swp
+*.swo
+
+# Environment
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace
+
+# Logs
+*.log
+
+# Data (local dev)
+data/
