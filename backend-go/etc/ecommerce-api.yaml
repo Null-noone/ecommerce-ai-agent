@@ -1,0 +1,29 @@
+Name: ecommerce-api
+Host: 0.0.0.0
+Port: 8080
+
+Database:
+  Type: mysql
+  Host: mysql
+  Port: 3306
+  User: ecom_user
+  Password: EcomPass456!
+  Database: ecommerce_db
+
+Redis:
+  Host: redis
+  Port: 6379
+  Password: RedisPass789!
+
+Kafka:
+  Brokers:
+    - kafka:9092
+  Topic: order_events
+
+PythonService:
+  Endpoints:
+    - http://python-svc:8000
+
+Auth:
+  Secret: your-secret-key-change-in-production
+  Expire: 86400
