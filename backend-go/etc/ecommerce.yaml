@@ -1,0 +1,29 @@
+Name: ecommerce-api
+Host: 0.0.0.0
+Port: 8080
+
+Log:
+  ServiceName: ecommerce-api
+  Mode: console
+  Level: info
+
+Mysql:
+  DataSource: ecom_user:EcomPass456!@tcp(mysql:3306)/ecommerce_db?charset=utf8mb4&parseTime=True&loc=Local
+
+Redis:
+  Host: redis
+  Port: 6379
+  Pass: RedisPass789!
+
+Kafka:
+  Brokers:
+    - kafka:9092
+  Topic: order_events
+
+PythonService:
+  Endpoints:
+    - http://python-svc:8000
+
+Auth:
+  Secret: your-secret-key-change-in-production
+  Expire: 86400
