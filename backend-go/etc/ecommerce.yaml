@@ -8,21 +8,21 @@ Log:
   Level: info
 
 Mysql:
-  DataSource: ecom_user:EcomPass456!@tcp(mysql:3306)/ecommerce_db?charset=utf8mb4&parseTime=True&loc=Local
+  DataSource: ${MYSQL_USER}:${MYSQL_PASSWORD}@tcp(${MYSQL_HOST}:${MYSQL_PORT})/${MYSQL_DATABASE}?charset=utf8mb4&parseTime=True&loc=Local
 
 Redis:
-  Host: redis
-  Port: 6379
-  Pass: RedisPass789!
+  Host: ${REDIS_HOST}
+  Port: ${REDIS_PORT}
+  Pass: ${REDIS_PASSWORD}
 
 Kafka:
   Brokers:
-    - kafka:9092
+    - ${KAFKA_HOST}:${KAFKA_PORT}
   Topic: order_events
 
 PythonService:
   Endpoints:
-    - http://python-svc:8000
+    - ${PYTHON_SERVICE_URL}
 
 Auth:
   Secret: your-secret-key-change-in-production
