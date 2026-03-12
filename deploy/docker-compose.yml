@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # ==================== Infrastructure ====================
   mysql:
     image: mysql:8.0
     container_name: ecom-mysql
@@ -112,6 +113,70 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+
+  # ==================== Application Services ====================
+  go-svc:
+    build:
+      context: ../backend-go
+      dockerfile: Dockerfile
+    container_name: ecom-go-api
+    ports:
+      - "8080:8080"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - VOLC_API_KEY=${VOLC_API_KEY}
+      - VOLC_ENDPOINT=${VOLC_ENDPOINT}
+    volumes:
+      - ./env/backend-go.env:/app/etc/ecommerce-api.yaml:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - ecom-net
+    restart: unless-stopped
+
+  python-svc:
+    build:
+      context: ../backend-python
+      dockerfile: Dockerfile
+    container_name: ecom-python-ai
+    ports:
+      - "8000:8000"
+    environment:
+      - VOLC_API_KEY=${VOLC_API_KEY}
+      - VOLC_ENDPOINT=${VOLC_ENDPOINT}
+      - MILVUS_HOST=milvus
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=ecommerce_db
+    depends_on:
+      milvus:
+        condition: service_started
+      mysql:
+        condition: service_healthy
+    networks:
+      - ecom-net
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: ecom-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - go-svc
+      - python-svc
+    networks:
+      - ecom-net
+    restart: unless-stopped
 
 networks:
   ecom-net:
