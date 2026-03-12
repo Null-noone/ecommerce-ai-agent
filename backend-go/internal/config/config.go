@@ -9,7 +9,7 @@ import (
 type Config struct {
 	rest.RestConf
 	Auth         AuthConfig
-	Database     DatabaseConfig
+	Mysql        MysqlConfig
 	Redis        RedisConfig
 	Kafka        KafkaConfig
 	PythonService zrpc.RpcClientConf
@@ -20,19 +20,14 @@ type AuthConfig struct {
 	Expire int
 }
 
-type DatabaseConfig struct {
-	Type     string
-	Host     string
-	Port     int
-	User     string
-	Password string
-	Database string
+type MysqlConfig struct {
+	DataSource string
 }
 
 type RedisConfig struct {
-	Host     string
-	Port     int
-	Password string
+	Host string
+	Port int
+	Pass string
 }
 
 type KafkaConfig struct {

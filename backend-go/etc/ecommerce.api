@@ -1,0 +1,121 @@
+type (
+	// Register request/response
+	RegisterReq struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+		Email    string `json:"email"`
+	}
+	
+	LoginReq struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	
+	LoginResp struct {
+		Token string `json:"token"`
+		User  User   `json:"user"`
+	}
+	
+	User struct {
+		ID       uint   `json:"id"`
+		Username string `json:"username"`
+		Email    string `json:"email"`
+	}
+	
+	// Product
+	Product struct {
+		ID          uint    `json:"id"`
+		Name        string  `json:"name"`
+		Description string  `json:"description"`
+		Price       float64 `json:"price"`
+		Stock       int     `json:"stock"`
+		ImageURL    string  `json:"image_url"`
+	}
+	
+	GetProductsReq struct {
+		Page     int `json:"page,default=1"`
+		PageSize int `json:"page_size,default=10"`
+	}
+	
+	GetProductReq struct {
+		ID uint `json:"id"`
+	}
+	
+	// Search
+	SearchReq struct {
+		Query string `json:"q"`
+		Page  int    `json:"page,default=1"`
+		Limit int    `json:"limit,default=10"`
+	}
+	
+	SearchResp struct {
+		Products []Product `json:"products"`
+		Query    string    `json:"query"`
+	}
+	
+	// Order
+	CreateOrderReq struct {
+		Items []OrderItem `json:"items"`
+	}
+	
+	OrderItem struct {
+		ProductID uint `json:"product_id"`
+		Quantity  int  `json:"quantity"`
+	}
+	
+	Order struct {
+		ID          uint        `json:"id"`
+		UserID      uint        `json:"user_id"`
+		TotalAmount float64     `json:"total_amount"`
+		Status     string      `json:"status"`
+		Items      []OrderItem `json:"items"`
+		CreatedAt  string      `json:"created_at"`
+	}
+	
+	GetOrdersReq struct {
+		Page     int `json:"page,default=1"`
+		PageSize int `json:"page_size,default=10"`
+	}
+)
+
+@server(
+	group: /api/v1/auth
+)
+service ecommerce-api {
+	@handler register
+	post /api/v1/auth/register (RegisterReq)
+	
+	@handler login
+	post /api/v1/auth/login (LoginReq) returns (LoginResp)
+}
+
+@server(
+	group: /api/v1/product
+)
+service ecommerce-api {
+	@handler getProducts
+	get /api/v1/products (GetProductsReq) returns ([]Product)
+	
+	@handler getProduct
+	get /api/v1/products/:id (GetProductReq) returns (Product)
+}
+
+@server(
+	group: /api/v1/search
+)
+service ecommerce-api {
+	@handler semanticSearch
+	get /api/v1/search/semantic (SearchReq) returns (SearchResp)
+}
+
+@server(
+	group: /api/v1/order
+	jwt: Auth
+)
+service ecommerce-api {
+	@handler createOrder
+	post /api/v1/orders (CreateOrderReq) returns (Order)
+	
+	@handler getOrders
+	get /api/v1/orders (GetOrdersReq) returns ([]Order)
+}
